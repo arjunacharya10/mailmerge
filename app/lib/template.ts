@@ -134,7 +134,9 @@ export function createPreview(
 }
 
 /**
- * Converts plain text to basic HTML (preserving line breaks)
+ * Converts plain text to HTML for Gmail
+ * - Escapes HTML entities
+ * - Converts line breaks to <br> tags
  */
 export function textToHtml(text: string): string {
   return text
@@ -145,22 +147,25 @@ export function textToHtml(text: string): string {
 }
 
 /**
- * Wraps content in a basic HTML email template
- * Uses no custom font to let Gmail apply its default font
+ * Wraps content in Gmail's default HTML structure
+ * Uses the gmail_default class and styling to match emails sent from Gmail's web interface
+ * - Font: arial, sans-serif (Gmail's "Sans Serif" default)
+ * - Size: small (~13-14px, Gmail's "Normal" size)
+ * - Color: #222222 (Gmail's default off-black)
  */
 export function wrapInHtmlTemplate(content: string): string {
-  return `
-<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  ${content}
+<body style="margin: 0; padding: 0;">
+  <div class="gmail_default" style="font-family: arial, sans-serif; font-size: small; color: #222222;">
+    ${content}
+  </div>
 </body>
-</html>
-  `.trim();
+</html>`.trim();
 }
 
 /**
