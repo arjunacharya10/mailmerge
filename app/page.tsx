@@ -76,7 +76,7 @@ export default function Home() {
   }, [session, personalizedEmails, template]);
 
   // Handle send
-  const handleSend = async (mode: SendMode, scheduledTime?: Date) => {
+  const handleSend = async (mode: SendMode) => {
     if (!isReadyToSend) return;
 
     setIsSending(true);
@@ -96,8 +96,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           emails: emailsToSend,
-          mode,
-          scheduledTime: scheduledTime?.toISOString(),
+          mode: mode === "draft" ? "schedule" : "now", // Map "draft" to "schedule" for API
         }),
       });
 
