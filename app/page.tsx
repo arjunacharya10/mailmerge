@@ -42,6 +42,18 @@ export default function Home() {
     setTemplate(newTemplate);
   }, []);
 
+  // Handle preview navigation
+  const handlePreviewNavigate = useCallback((direction: "prev" | "next") => {
+    if (!csvData) return;
+    const maxIndex = csvData.rows.length - 1;
+    
+    if (direction === "prev" && selectedRecipientIndex > 0) {
+      setSelectedRecipientIndex(selectedRecipientIndex - 1);
+    } else if (direction === "next" && selectedRecipientIndex < maxIndex) {
+      setSelectedRecipientIndex(selectedRecipientIndex + 1);
+    }
+  }, [csvData, selectedRecipientIndex]);
+
   // Generate personalized emails
   const personalizedEmails = useMemo((): PersonalizedEmail[] => {
     if (!csvData || !template.subject || !emailField) return [];
@@ -154,7 +166,7 @@ export default function Home() {
               <div>
                 <h1 className="text-lg font-bold text-zinc-900 dark:text-white">
                   Mail Merge
-                </h1>
+          </h1>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400">
                   Personalized bulk emails
                 </p>
@@ -368,6 +380,7 @@ export default function Home() {
                       email={previewEmail}
                       recipientIndex={selectedRecipientIndex}
                       totalRecipients={csvData.rows.length}
+                      onNavigate={handlePreviewNavigate}
                     />
                   </section>
                 )}
@@ -391,7 +404,7 @@ export default function Home() {
                 )}
               </div>
             </div>
-          </div>
+        </div>
         )}
       </main>
 

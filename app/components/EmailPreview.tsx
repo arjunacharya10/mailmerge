@@ -6,12 +6,14 @@ interface EmailPreviewProps {
   email: PersonalizedEmail | null;
   recipientIndex: number;
   totalRecipients: number;
+  onNavigate: (direction: "prev" | "next") => void;
 }
 
 export default function EmailPreview({
   email,
   recipientIndex,
   totalRecipients,
+  onNavigate,
 }: EmailPreviewProps) {
   if (!email) {
     return (
@@ -23,14 +25,40 @@ export default function EmailPreview({
     );
   }
 
+  const canGoPrev = recipientIndex > 0;
+  const canGoNext = recipientIndex < totalRecipients - 1;
+
   return (
     <div className="rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
-      {/* Email Header */}
+      {/* Email Header with Navigation */}
       <div className="bg-zinc-50 dark:bg-zinc-800 px-4 py-3 border-b border-zinc-200 dark:border-zinc-700">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Preview {recipientIndex + 1} of {totalRecipients}
-          </span>
+          {/* Navigation Controls */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onNavigate("prev")}
+              disabled={!canGoPrev}
+              className="p-1.5 rounded-lg bg-white dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-100 dark:hover:bg-zinc-600 transition-colors"
+              title="Previous recipient"
+            >
+              <svg className="w-4 h-4 text-zinc-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 min-w-[80px] text-center">
+              {recipientIndex + 1} of {totalRecipients}
+            </span>
+            <button
+              onClick={() => onNavigate("next")}
+              disabled={!canGoNext}
+              className="p-1.5 rounded-lg bg-white dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-100 dark:hover:bg-zinc-600 transition-colors"
+              title="Next recipient"
+            >
+              <svg className="w-4 h-4 text-zinc-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
           <span className="px-2 py-0.5 text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded">
             Personalized
           </span>
@@ -61,7 +89,7 @@ export default function EmailPreview({
                 __html: email.body
                   .replace(/\n/g, "<br>")
                   .replace(
-                    /{{(\w+)}}/g,
+                    /\{\{([^{}]+)\}\}/g,
                     '<span class="px-1 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded text-xs font-mono">{{$1}}</span>'
                   ),
               }}
@@ -92,4 +120,3 @@ export default function EmailPreview({
     </div>
   );
 }
-
