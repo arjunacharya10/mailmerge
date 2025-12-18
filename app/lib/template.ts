@@ -161,7 +161,7 @@ export function wrapInHtmlTemplate(content: string): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="margin: 0; padding: 0;">
-  <div class="gmail_default" style="font-family: arial, sans-serif; font-size: small; color: #222222;">
+  <div class="gmail_default">
     ${content}
   </div>
 </body>
