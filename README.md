@@ -1,36 +1,156 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mail Merge Tool
 
-## Getting Started
+A Next.js application for sending personalized bulk emails via Gmail. Upload a CSV file with recipient data, compose templates with personalization variables, and send or schedule your email campaigns.
 
-First, run the development server:
+## Features
+
+- **Gmail OAuth Integration** - Securely connect to your Gmail account
+- **CSV Upload** - Import recipients from any CSV file
+- **Template Personalization** - Use `{{variable}}` syntax for dynamic content
+- **Email Preview** - Preview personalized emails before sending
+- **Bulk Send** - Send to multiple recipients with rate limiting
+- **Schedule Send** - Create drafts for later sending
+
+## Setup
+
+### 1. Create Google Cloud Project
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the **Gmail API**:
+   - Navigate to "APIs & Services" > "Library"
+   - Search for "Gmail API" and enable it
+
+### 2. Configure OAuth Consent Screen
+
+1. Go to "APIs & Services" > "OAuth consent screen"
+2. Select "External" user type (or "Internal" for Google Workspace)
+3. Fill in the required fields:
+   - App name: "Mail Merge Tool"
+   - User support email: Your email
+   - Developer contact: Your email
+4. Add scopes:
+   - `openid`
+   - `email`
+   - `profile`
+   - `https://www.googleapis.com/auth/gmail.send`
+5. Add your test email to the test users list (required for external apps in testing mode)
+
+### 3. Create OAuth Credentials
+
+1. Go to "APIs & Services" > "Credentials"
+2. Click "Create Credentials" > "OAuth client ID"
+3. Select "Web application"
+4. Add authorized redirect URIs:
+   - `http://localhost:3000/api/auth/callback/google` (for development)
+   - `https://yourdomain.com/api/auth/callback/google` (for production)
+5. Copy the Client ID and Client Secret
+
+### 4. Configure Environment Variables
+
+Create a `.env.local` file in the project root:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Google OAuth Credentials
+GOOGLE_CLIENT_ID=your_client_id_here
+GOOGLE_CLIENT_SECRET=your_client_secret_here
+
+# NextAuth Configuration
+AUTH_SECRET=your_random_secret_here
+NEXTAUTH_URL=http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Generate `AUTH_SECRET` with:
+```bash
+openssl rand -base64 32
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. Install Dependencies & Run
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000) to use the application.
 
-To learn more about Next.js, take a look at the following resources:
+## Usage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 1. Sign In
+Click "Sign in with Google" and authorize the application to send emails on your behalf.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 2. Upload CSV
+Upload a CSV file containing your recipients. The CSV should have:
+- An email column (auto-detected)
+- Any additional columns for personalization (name, company, etc.)
 
-## Deploy on Vercel
+Example CSV:
+```csv
+email,name,company
+john@example.com,John Smith,Acme Corp
+jane@example.com,Jane Doe,Tech Inc
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 3. Compose Template
+Write your email using `{{variable}}` placeholders that match your CSV columns:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Subject:** `Hello {{name}}, exciting news from us!`
+
+**Body:**
+```
+Hi {{name}},
+
+I wanted to reach out regarding {{company}}...
+
+Best regards,
+Your Name
+```
+
+### 4. Preview & Send
+- Select different recipients to preview personalized emails
+- Choose "Send Now" or "Schedule Send"
+- Monitor progress in real-time
+
+## Important Notes
+
+### Gmail Sending Limits
+- **Free Gmail accounts**: ~100 emails/day
+- **Google Workspace**: Higher limits based on your plan
+
+### Scheduled Emails
+Scheduled emails are saved as drafts in your Gmail. The Gmail API doesn't support native schedule send like the web interface, so for true scheduling, you can:
+1. Use "Send Now" at your desired time
+2. Use the drafts created and schedule them via Gmail web interface
+
+### Security
+- OAuth tokens are stored in your session only
+- No email data is stored on any server
+- The app only requests permission to send emails
+
+## Tech Stack
+
+- **Framework**: Next.js 16 with App Router
+- **Auth**: Auth.js (NextAuth v5) with Google Provider
+- **Styling**: Tailwind CSS
+- **Email**: Gmail API via googleapis
+- **CSV**: Papa Parse
+
+## Development
+
+```bash
+# Development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Lint code
+npm run lint
+```
+
+## License
+
+MIT
