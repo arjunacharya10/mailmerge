@@ -1,4 +1,4 @@
-# Mail Merge Tool
+# Mail Merge Tool - Because I hate having to pay for this
 
 A Next.js application for sending personalized bulk emails via Gmail. Upload a CSV file with recipient data, compose templates with personalization variables, and send your email campaigns.
 
@@ -54,12 +54,10 @@ A Next.js application for sending personalized bulk emails via Gmail. Upload a C
 5. Under **"Authorized JavaScript origins"**, add:
    ```
    http://localhost:3000
-   http://localhost:3001
    ```
 6. Under **"Authorized redirect URIs"**, add:
    ```
    http://localhost:3000/api/auth/callback/google
-   http://localhost:3001/api/auth/callback/google
    ```
 7. Click "Create"
 8. **Copy the Client ID and Client Secret** (you'll need these next)
@@ -75,7 +73,6 @@ Examples:
 | Environment | Redirect URI |
 |-------------|--------------|
 | Local (port 3000) | `http://localhost:3000/api/auth/callback/google` |
-| Local (port 3001) | `http://localhost:3001/api/auth/callback/google` |
 | Production | `https://yourdomain.com/api/auth/callback/google` |
 
 > **Important**: The redirect URI must match EXACTLY, including the protocol (http/https), port, and path.
